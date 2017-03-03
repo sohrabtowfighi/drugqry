@@ -2,7 +2,7 @@
 # Provided as is with no warranty whatsoever, 
 # not even for intended purpose.
 # Sohrab Towfighi, MD Candidate at Univ. Toronto
-# GNU GPL V3 Licence. (c) 2017
+# GNU GPL V2 Licence. (c) 2017
 docstring = """
    DrugQry - Provided as is with no warranty 
    whatsoever not even for intended purpose.
