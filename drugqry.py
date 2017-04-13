@@ -185,7 +185,7 @@ def print_interaction(interaction):
     output = output + '\n' + interaction.description + '\n'
     return output
 
-def main(comma_separated_drug_list):
+def main(comma_separated_drug_list, work_dir):
     db_file = 'full_database.db'
     drug_list = comma_separated_drug_list.split(',')
     drug_list = standardize_capitalization_in_list(drug_list)
@@ -222,5 +222,6 @@ if __name__ == '__main__':
         setup_sql_db(source_xml_file, destination_db_file)
     else:        
         comma_separated_drug_list = args[0]
-        output = main(comma_separated_drug_list)
+        work_dir = os.getcwd()
+        output = main(comma_separated_drug_list, work_dir)
         print(output)
