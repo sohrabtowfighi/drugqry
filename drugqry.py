@@ -181,9 +181,35 @@ def get_interactions(drug_name, conn, drugs_to_check):
     return interactions_list
 
 def print_interaction(interaction):
-    print(interaction.drug_name + ' interacts with ' + interaction.interacts_with)
-    print(interaction.description)
+    output = interaction.drug_name + ' interacts with ' + interaction.interacts_with
+    output = output + '\n' + interaction.description + '\n'
+    return output
 
+def main(comma_separated_drug_list):
+    drug_list = comma_separated_drug_list.split(',')
+    drug_list = standardize_capitalization_in_list(drug_list)
+    conn = sqlite3.connect(db_file)
+    # check that the drugs in the drug list can be found in the database
+    for drug in drug_list:
+        if check_drug_in_db(drug, conn) == False:
+            return(drug + 
+                   " is not in database. Remove it/fix spelling and try again.")
+    # compare first drug to all others
+    # then compare second drug to all others excluding first drug
+    # then compare third drug to all others excluding first and 2nd drug
+    # etc.
+    relevant_interactions = list()
+    for i in range(0,len(drug_list)-1):
+        drug = drug_list[i]
+        all_others = drug_list[i+1:]
+        intxns = get_interactions(drug, conn, all_others)
+        if intxns: # none empty
+            relevant_interactions = relevant_interactions + intxns
+    interactions_report = ''
+    for interaction in relevant_interactions:
+        interactions_report += print_interaction(interaction)
+    return interactions_report
+    
 if __name__ == '__main__':
     args = sys.argv[1:]
     if len(args) == 0:
@@ -196,24 +222,5 @@ if __name__ == '__main__':
     else:
         db_file = 'full_database.db'
         comma_separated_drug_list = args[0]
-        drug_list = comma_separated_drug_list.split(',')
-        drug_list = standardize_capitalization_in_list(drug_list)
-        conn = sqlite3.connect(db_file)
-        # check that the drugs in the drug list can be found in the database
-        for drug in drug_list:
-            if check_drug_in_db(drug, conn) == False:
-                raise Exception(drug + "is not in database. " +
-                                 "Remove it/fix spelling and try again.")
-        # compare first drug to all others
-        # then compare second drug to all others excluding first drug
-        # then compare third drug to all others excluding first and 2nd drug
-        # etc.
-        relevant_interactions = list()
-        for i in range(0,len(drug_list)-1):
-            drug = drug_list[i]
-            all_others = drug_list[i+1:]
-            intxns = get_interactions(drug, conn, all_others)
-            if intxns: # none empty
-                relevant_interactions = relevant_interactions + intxns
-        for interaction in relevant_interactions:
-            print_interaction(interaction)
+        output = main(comma_separated_drug_list)
+        print(output)
