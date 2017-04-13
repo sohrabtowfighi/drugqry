@@ -20,6 +20,7 @@ import xml.etree.ElementTree as ET
 import pdb
 import sqlite3
 import sys
+import os
 prefix = '{http://www.drugbank.ca}'
 
 class Drug():
@@ -186,7 +187,7 @@ def print_interaction(interaction):
     return output
 
 def main(comma_separated_drug_list, work_dir):
-    db_file = 'full_database.db'
+    db_file = os.path.join(work_dir, 'full_database.db')
     drug_list = comma_separated_drug_list.split(',')
     drug_list = standardize_capitalization_in_list(drug_list)
     conn = sqlite3.connect(db_file)
