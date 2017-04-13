@@ -186,6 +186,7 @@ def print_interaction(interaction):
     return output
 
 def main(comma_separated_drug_list):
+    db_file = 'full_database.db'
     drug_list = comma_separated_drug_list.split(',')
     drug_list = standardize_capitalization_in_list(drug_list)
     conn = sqlite3.connect(db_file)
@@ -219,8 +220,7 @@ if __name__ == '__main__':
         source_xml_file = 'full database.xml'
         destination_db_file = 'full_database.db'
         setup_sql_db(source_xml_file, destination_db_file)
-    else:
-        db_file = 'full_database.db'
+    else:        
         comma_separated_drug_list = args[0]
         output = main(comma_separated_drug_list)
         print(output)
