@@ -161,6 +161,15 @@ def check_drug_in_db(drug_name, conn):
     else:
         return False
 
+def read_drug_names(partial_name, conn):
+    partial_name = partial_name.lower()
+    QRY = "SELECT drug_name FROM drugs WHERE (lower(drug_name) LIKE '%"
+    QRY += partial_name+"%'"
+    cur = conn.cursor()
+    cur.execute(QRY, (drug_name,))
+    rows = cur.fetchall()
+    return rows
+            
 def get_interactions(drug_name, conn, drugs_to_check):
     if not drugs_to_check: # list is empty or None passed
         return
@@ -194,8 +203,11 @@ def main(comma_separated_drug_list, work_dir):
     # check that the drugs in the drug list can be found in the database
     for drug in drug_list:
         if check_drug_in_db(drug, conn) == False:
-            return(drug + 
+            msg = (drug + 
                    " is not in database. Remove it/fix spelling and try again.")
+            for row in read_drug_names(drug, conn):
+                msg += row[0] + '\n'
+            return(msg)
     # compare first drug to all others
     # then compare second drug to all others excluding first drug
     # then compare third drug to all others excluding first and 2nd drug
@@ -224,5 +236,5 @@ if __name__ == '__main__':
     else:        
         comma_separated_drug_list = args[0]
         work_dir = os.getcwd()
-        output = main(comma_separated_drug_list, work_dir)
+        output = main(comma_separated_drug_list, work_dir)        
         print(output)
