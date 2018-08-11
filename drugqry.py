@@ -163,10 +163,10 @@ def check_drug_in_db(drug_name, conn):
 
 def read_drug_names(partial_name, conn):
     partial_name = partial_name.lower()
-    QRY = "SELECT drug_name FROM drugs WHERE (lower(drug_name) LIKE '%"
-    QRY += partial_name+"%'"
+    QRY = "SELECT name FROM drugs WHERE lower(name) LIKE (?)"
+    print(QRY)
     cur = conn.cursor()
-    cur.execute(QRY, (drug_name,))
+    cur.execute(QRY, (partial_name,))
     rows = cur.fetchall()
     return rows
             
@@ -198,7 +198,7 @@ def print_interaction(interaction):
 def main(comma_separated_drug_list, work_dir):
     db_file = os.path.join(work_dir, 'full_database.db')
     drug_list = comma_separated_drug_list.split(',')
-    drug_list = standardize_capitalization_in_list(drug_list)
+    #drug_list = standardize_capitalization_in_list(drug_list)
     conn = sqlite3.connect(db_file)
     # check that the drugs in the drug list can be found in the database
     for drug in drug_list:
